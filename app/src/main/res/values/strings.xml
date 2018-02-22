@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MewPurr</string>
+    <string name="feed_me">feed me!</string>
+    <string name="set_time">set time</string>
+</resources>
