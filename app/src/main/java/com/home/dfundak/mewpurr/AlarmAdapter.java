@@ -2,11 +2,14 @@ package com.home.dfundak.mewpurr;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.home.dfundak.mewpurr.Class.Alarm;
 
 import java.util.ArrayList;
 
@@ -17,9 +20,15 @@ import java.util.ArrayList;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     private ArrayList<Alarm> mAlarms;
+    private Context mContext;
 
     public AlarmAdapter(ArrayList<Alarm> alarms) {
         mAlarms = alarms;
+    }
+
+    public AlarmAdapter(Context mContext, ArrayList<Alarm> alarms) {
+        this.mContext = mContext;
+        this.mAlarms = alarms;
     }
 
     @Override
@@ -46,9 +55,20 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         this.mAlarms.add(alarm);
         this.notifyDataSetChanged();
     }
+
     public void deleteAt(int position) {
         this.mAlarms.remove(position);
         this.notifyDataSetChanged();
+    }
+
+    public void updateData(ArrayList<Alarm> viewModels) {
+        mAlarms.clear();
+        Log.d("alarm", "view models " + viewModels.size());
+        for (int i = 0; i < viewModels.size(); i++) {
+            Log.d("alarm", "" + viewModels.get(i).getTime());
+        }
+        mAlarms.addAll(viewModels);
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

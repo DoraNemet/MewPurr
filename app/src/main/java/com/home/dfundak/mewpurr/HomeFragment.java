@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -21,6 +22,13 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.home_fragment, container, false);
         initializeUI(layout);
+
+        ImageView homeImage = getActivity().findViewById(R.id.home_image);
+        homeImage.setAlpha(0.5f);
+        ImageView statsImage = getActivity().findViewById(R.id.stats_image);
+        statsImage.setAlpha(1f);
+        ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
+        alarmImage.setAlpha(1f);
         return layout;
     }
 
