@@ -1,7 +1,10 @@
 package com.home.dfundak.mewpurr;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TimePicker;
@@ -31,7 +35,7 @@ import java.util.List;
 public class AlarmFragment extends Fragment {
     Button setTime;
     RecyclerView alarmsLV;
-    ArrayList<Alarm> users = new ArrayList<Alarm>();
+    ArrayList<Alarm> alarms = new ArrayList<Alarm>();
     AlarmAdapter adapter;
 
     @Override
@@ -49,7 +53,7 @@ public class AlarmFragment extends Fragment {
         this.setTime = (Button) layout.findViewById(R.id.set_time);
         this.alarmsLV = (RecyclerView) layout.findViewById(R.id.alarms_list_view);
 
-        adapter = new AlarmAdapter(users); // Create adapter
+        adapter = new AlarmAdapter(alarms); // Create adapter
         alarmsLV.setAdapter(adapter); //set empty adapter
         alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
@@ -65,7 +69,6 @@ public class AlarmFragment extends Fragment {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         if (timePicker.isShown()) {
-                            Toast.makeText(getActivity(), selectedHour + ":" + selectedMinute, Toast.LENGTH_SHORT).show();
                             setAlarm(selectedHour, selectedMinute);
                         }
                     }
@@ -74,6 +77,28 @@ public class AlarmFragment extends Fragment {
                 timePicker.show();
             }
         });
+
+        alarmsLV.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                final int mpos = position;
+                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Are you sure you want to delete " + alarms.get(position).getTime() + " alarm?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                new DeleteData(alarms.get(mpos)).execute(SupportData.getAddressSingle(alarms.get(mpos)));
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                            }
+                        })
+                        .show();
+                      }
+        }));
 
         ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
         alarmImage.setAlpha(0.5f);
@@ -84,15 +109,24 @@ public class AlarmFragment extends Fragment {
     }
 
     private void setAlarm(int selectedHour, int selectedMinute) {
-        String time = selectedHour + ":" + selectedMinute;
-        new PostData(time).execute(SupportData.getAddressAPI());
+        StringBuilder timeString = new StringBuilder();
+        if(selectedHour < 10){
+            timeString.append("0");
+        }
+        timeString.append(selectedHour);
+        timeString.append(":");
+        if (selectedMinute < 10) {
+            timeString.append("0");
+        }
+        timeString.append(selectedMinute);
+        new PostData(timeString.toString()).execute(SupportData.getAddressAPI());
     }
 
     class PostData extends AsyncTask<String, String, String> {
-        String userName;
+        String alarmName;
 
-        public PostData(String userName) {
-            this.userName = userName;
+        public PostData(String alarmName) {
+            this.alarmName = alarmName;
         }
 
         @Override
@@ -105,7 +139,7 @@ public class AlarmFragment extends Fragment {
             String urlString = params[0];
 
             HTTPDataHandler hh = new HTTPDataHandler();
-            String json = "{\"time\":\"" + userName + "\"}";
+            String json = "{\"time\":\"" + alarmName + "\"}";
             hh.PostHTTPData(urlString, json);
             return "";
         }
@@ -145,13 +179,42 @@ public class AlarmFragment extends Fragment {
             Type listType = new TypeToken<List<Alarm>>() {
             }.getType();
             alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
-            users = gson.fromJson(s, listType); // parse to List
+            alarms = gson.fromJson(s, listType); // parse to List
 
-            for (int i = users.size(); i<0; i++){
-                Log.d("alarm", users.get(i).getTime());
+            for (int i = alarms.size(); i < 0; i++) {
+                Log.d("alarm", alarms.get(i).getTime());
             }
 
-            adapter.updateData(users);
+            adapter.updateData(alarms);
+        }
+    }
+
+    class DeleteData extends AsyncTask<String, String, String> {
+        Alarm alarm;
+
+        public DeleteData(Alarm alarm) {
+            this.alarm = alarm;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String urlString = params[0];
+
+            HTTPDataHandler hh = new HTTPDataHandler();
+            String json = "{\"alarm\":\"" + alarm.getTime() + "\"}";
+            hh.DeleteHTTPData(urlString, json);
+            return "";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            new AlarmFragment.GetData().execute(SupportData.getAddressAPI());
         }
     }
 }

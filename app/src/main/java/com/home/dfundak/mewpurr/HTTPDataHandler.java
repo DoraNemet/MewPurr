@@ -22,7 +22,7 @@ public class HTTPDataHandler {
 
     public String GetHTTPData(String urlString) {
         try {
-            Log.d("alarm","GET");
+            Log.d("alarm", "GET");
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -39,17 +39,13 @@ public class HTTPDataHandler {
                     sb.append(line);
                 stream = sb.toString();
                 urlConnection.disconnect();
-            } else {
-
-            }
-
+            } else {}
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.d("alarm", "stream " + stream);
         return stream;
     }
 
@@ -68,6 +64,34 @@ public class HTTPDataHandler {
             urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
             urlConnection.connect();
 
+            try (OutputStream os = urlConnection.getOutputStream()) {
+                os.write(out);
+            }
+            InputStream response = urlConnection.getInputStream();
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void DeleteHTTPData(String urlString, String json) {
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.setRequestMethod("DELETE");
+            urlConnection.setDoOutput(true);
+
+            byte[] out = json.getBytes(StandardCharsets.UTF_8);
+            int length = out.length;
+
+            urlConnection.setFixedLengthStreamingMode(length);
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            urlConnection.connect();
             try (OutputStream os = urlConnection.getOutputStream()) {
                 os.write(out);
             }

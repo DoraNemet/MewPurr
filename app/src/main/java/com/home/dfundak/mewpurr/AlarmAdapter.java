@@ -1,6 +1,7 @@
 package com.home.dfundak.mewpurr;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +40,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         ViewHolder alarmViewHolder = new ViewHolder(alarmView);
         return alarmViewHolder;
     }
+
 
     @Override
     public void onBindViewHolder(AlarmAdapter.ViewHolder holder, int position) {
@@ -81,4 +83,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             this.remove = (ImageView) itemView.findViewById(R.id.remove_button);
         }
     }
+
+
+
 }
