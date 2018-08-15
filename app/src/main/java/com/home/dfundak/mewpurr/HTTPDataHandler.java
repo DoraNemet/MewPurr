@@ -67,7 +67,7 @@ public class HTTPDataHandler {
             try (OutputStream os = urlConnection.getOutputStream()) {
                 os.write(out);
             }
-
+            InputStream response = urlConnection.getInputStream();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
@@ -94,6 +94,7 @@ public class HTTPDataHandler {
             try (OutputStream os = urlConnection.getOutputStream()) {
                 os.write(out);
             }
+            InputStream response = urlConnection.getInputStream();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
