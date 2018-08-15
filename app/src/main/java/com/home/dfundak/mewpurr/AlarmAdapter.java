@@ -53,16 +53,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return this.mAlarms.size();
     }
 
-    public void insert(Alarm alarm) {
-        this.mAlarms.add(alarm);
-        this.notifyDataSetChanged();
-    }
-
-    public void deleteAt(int position) {
-        this.mAlarms.remove(position);
-        this.notifyDataSetChanged();
-    }
-
     public void updateData(ArrayList<Alarm> viewModels) {
         mAlarms.clear();
         Log.d("alarm", "view models " + viewModels.size());
@@ -83,7 +73,4 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             this.remove = (ImageView) itemView.findViewById(R.id.remove_button);
         }
     }
-
-
-
 }

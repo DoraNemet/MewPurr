@@ -4,7 +4,10 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -33,8 +37,10 @@ import java.util.List;
  */
 
 public class AlarmFragment extends Fragment {
-    Button setTime;
-    RecyclerView alarmsLV;
+    private Button setTime;
+    private RecyclerView alarmsLV;
+    private ProgressBar progressBar;
+
     ArrayList<Alarm> alarms = new ArrayList<Alarm>();
     AlarmAdapter adapter;
 
@@ -47,58 +53,9 @@ public class AlarmFragment extends Fragment {
     }
 
     private void initializeUI(View layout) {
-        //Load data when app opened
-        new GetData().execute(SupportData.getAddressAPI());
-
-        this.setTime = (Button) layout.findViewById(R.id.set_time);
-        this.alarmsLV = (RecyclerView) layout.findViewById(R.id.alarms_list_view);
-
-        adapter = new AlarmAdapter(alarms); // Create adapter
-        alarmsLV.setAdapter(adapter); //set empty adapter
-        alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        this.setTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Calendar currentTime = Calendar.getInstance();
-                int hour = currentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = currentTime.get(Calendar.MINUTE);
-
-                TimePickerDialog timePicker;
-                timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        if (timePicker.isShown()) {
-                            setAlarm(selectedHour, selectedMinute);
-                        }
-                    }
-                }, hour, minute, true);
-                timePicker.setTitle("Select Time");
-                timePicker.show();
-            }
-        });
-
-        alarmsLV.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                final int mpos = position;
-                AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure you want to delete " + alarms.get(position).getTime() + " alarm?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                new DeleteData(alarms.get(mpos)).execute(SupportData.getAddressSingle(alarms.get(mpos)));
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                            }
-                        })
-                        .show();
-                      }
-        }));
+        setTime = layout.findViewById(R.id.set_time);
+        alarmsLV = layout.findViewById(R.id.alarms_list_view);
+        progressBar = layout.findViewById(R.id.pbProgress);
 
         ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
         alarmImage.setAlpha(0.5f);
@@ -106,6 +63,65 @@ public class AlarmFragment extends Fragment {
         statsImage.setAlpha(1f);
         ImageView homeImage = getActivity().findViewById(R.id.home_image);
         homeImage.setAlpha(1f);
+
+        if (isConnected(getActivity())) {
+            adapter = new AlarmAdapter(alarms);
+            alarmsLV.setAdapter(adapter);
+            alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+            new GetData().execute(SupportData.getAddressAPI());
+            this.setTime.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Calendar currentTime = Calendar.getInstance();
+                    int hour = currentTime.get(Calendar.HOUR_OF_DAY);
+                    int minute = currentTime.get(Calendar.MINUTE);
+
+                    TimePickerDialog timePicker;
+                    timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+                        @Override
+                        public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                            if (timePicker.isShown()) {
+                                setAlarm(selectedHour, selectedMinute);
+                            }
+                        }
+                    }, hour, minute, true);
+                    timePicker.setTitle("Select Time");
+                    timePicker.show();
+                }
+            });
+
+            alarmsLV.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    final int mpos = position;
+                    AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setTitle("Are you sure you want to delete " + alarms.get(position).getTime() + " alarm?")
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    new DeleteData(alarms.get(mpos)).execute(SupportData.getAddressSingle(alarms.get(mpos)));
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            })
+                            .show();
+                }
+            }));
+
+        } else {
+            setTime.setEnabled(false);
+            progressBar.setVisibility(View.GONE);
+            alarms = PreferencesManagment.loadAlarms(getActivity());
+
+            adapter = new AlarmAdapter(alarms);
+            alarmsLV.setAdapter(adapter);
+            alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
     }
 
     private void setAlarm(int selectedHour, int selectedMinute) {
@@ -132,6 +148,7 @@ public class AlarmFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -172,6 +189,7 @@ public class AlarmFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            progressBar.setVisibility(View.GONE);
             //Done process
 
             //GSon to parse Json to Class
@@ -180,12 +198,8 @@ public class AlarmFragment extends Fragment {
             }.getType();
             alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
             alarms = gson.fromJson(s, listType); // parse to List
-
-            for (int i = alarms.size(); i < 0; i++) {
-                Log.d("alarm", alarms.get(i).getTime());
-            }
-
             adapter.updateData(alarms);
+            PreferencesManagment.saveAlarms(getActivity(), alarms);
         }
     }
 
@@ -194,6 +208,7 @@ public class AlarmFragment extends Fragment {
 
         public DeleteData(Alarm alarm) {
             this.alarm = alarm;
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -216,5 +231,20 @@ public class AlarmFragment extends Fragment {
             super.onPostExecute(s);
             new AlarmFragment.GetData().execute(SupportData.getAddressAPI());
         }
+    }
+
+    public boolean isConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netinfo = cm.getActiveNetworkInfo();
+
+        if (netinfo != null && netinfo.isConnectedOrConnecting()) {
+            android.net.NetworkInfo wifi = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            android.net.NetworkInfo mobile = cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+            if ((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null && wifi.isConnectedOrConnecting()))
+                return true;
+            else return false;
+        } else
+            return false;
     }
 }

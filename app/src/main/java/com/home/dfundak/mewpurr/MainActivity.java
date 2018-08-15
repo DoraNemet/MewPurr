@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView clock, home, trends;
 
     @Override
@@ -15,24 +15,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeUI();
-        setUp();
+        if(savedInstanceState == null) {
+            FragmentManager manager = getFragmentManager();
+            FragmentTransaction transaction = manager.beginTransaction();
+            transaction.add(R.id.frameLayout, new HomeFragment())
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void initializeUI() {
-        this.clock = (ImageView) this.findViewById(R.id.alarm_image);
-        this.home = (ImageView) this.findViewById(R.id.home_image);
-        this.trends = (ImageView) this.findViewById(R.id.stats_image);
+        clock = this.findViewById(R.id.alarm_image);
+        home = this.findViewById(R.id.home_image);
+        trends = this.findViewById(R.id.stats_image);
 
-        this.clock.setOnClickListener(new View.OnClickListener() {
+        clock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });
-        this.home.setOnClickListener(this);
-        this.trends.setOnClickListener(this);
-        this.clock.setOnClickListener(this);
+        home.setOnClickListener(this);
+        trends.setOnClickListener(this);
+        clock.setOnClickListener(this);
     }
+
     @Override
     public void onClick(View v) {
         FragmentManager fragmentManager = getFragmentManager();
@@ -52,12 +64,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
-
-    private void setUp() {
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frameLayout, new HomeFragment());
-        fragmentTransaction.commit();
-    }
-
 }
