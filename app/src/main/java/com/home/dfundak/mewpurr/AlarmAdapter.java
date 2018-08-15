@@ -21,15 +21,9 @@ import java.util.ArrayList;
 public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
 
     private ArrayList<Alarm> mAlarms;
-    private Context mContext;
 
     public AlarmAdapter(ArrayList<Alarm> alarms) {
         mAlarms = alarms;
-    }
-
-    public AlarmAdapter(Context mContext, ArrayList<Alarm> alarms) {
-        this.mContext = mContext;
-        this.mAlarms = alarms;
     }
 
     @Override
@@ -40,7 +34,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         ViewHolder alarmViewHolder = new ViewHolder(alarmView);
         return alarmViewHolder;
     }
-
 
     @Override
     public void onBindViewHolder(AlarmAdapter.ViewHolder holder, int position) {
@@ -55,10 +48,6 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
     public void updateData(ArrayList<Alarm> viewModels) {
         mAlarms.clear();
-        Log.d("alarm", "view models " + viewModels.size());
-        for (int i = 0; i < viewModels.size(); i++) {
-            Log.d("alarm", "" + viewModels.get(i).getTime());
-        }
         mAlarms.addAll(viewModels);
         notifyDataSetChanged();
     }
@@ -69,8 +58,8 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.time = (TextView) itemView.findViewById(R.id.time);
-            this.remove = (ImageView) itemView.findViewById(R.id.remove_button);
+            this.time = itemView.findViewById(R.id.time);
+            this.remove = itemView.findViewById(R.id.remove_button);
         }
     }
 }

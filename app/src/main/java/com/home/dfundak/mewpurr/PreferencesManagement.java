@@ -11,15 +11,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PreferencesManagment {
+public class PreferencesManagement {
 
     public static String PREFS_FILE = "MyPreferences";
 
-    public static void saveAlarms(Context context, ArrayList<Alarm> collageList) {
+    public static void saveAlarms(Context context, ArrayList<Alarm> alarmsList) {
         SharedPreferences mPrefs = context.getSharedPreferences(PREFS_FILE, context.MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = mPrefs.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(collageList);
+        String json = gson.toJson(alarmsList);
         prefsEditor.putString("myJson", json);
         prefsEditor.commit();
     }
@@ -36,7 +36,6 @@ public class PreferencesManagment {
             }.getType();
             savedAlarms = gson.fromJson(json, type);
         }
-
         return savedAlarms;
     }
 }

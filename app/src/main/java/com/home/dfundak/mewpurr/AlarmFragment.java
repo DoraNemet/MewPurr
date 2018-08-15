@@ -2,7 +2,6 @@ package com.home.dfundak.mewpurr;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,16 +11,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -46,7 +42,6 @@ public class AlarmFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.alarm_fragment, container, false);
         initializeUI(layout);
         return layout;
@@ -116,8 +111,7 @@ public class AlarmFragment extends Fragment {
         } else {
             setTime.setEnabled(false);
             progressBar.setVisibility(View.GONE);
-            alarms = PreferencesManagment.loadAlarms(getActivity());
-
+            alarms = PreferencesManagement.loadAlarms(getActivity());
             adapter = new AlarmAdapter(alarms);
             alarmsLV.setAdapter(adapter);
             alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -177,7 +171,6 @@ public class AlarmFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... params) {
-            //Running process
             String stream = null;
             String urlString = params[0];
 
@@ -190,16 +183,14 @@ public class AlarmFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             progressBar.setVisibility(View.GONE);
-            //Done process
 
-            //GSon to parse Json to Class
             Gson gson = new Gson();
             Type listType = new TypeToken<List<Alarm>>() {
             }.getType();
             alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
             alarms = gson.fromJson(s, listType); // parse to List
             adapter.updateData(alarms);
-            PreferencesManagment.saveAlarms(getActivity(), alarms);
+            PreferencesManagement.saveAlarms(getActivity(), alarms);
         }
     }
 

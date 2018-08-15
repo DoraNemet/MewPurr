@@ -22,7 +22,6 @@ public class HTTPDataHandler {
 
     public String GetHTTPData(String urlString) {
         try {
-            Log.d("alarm", "GET");
             URL url = new URL(urlString);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -39,7 +38,8 @@ public class HTTPDataHandler {
                     sb.append(line);
                 stream = sb.toString();
                 urlConnection.disconnect();
-            } else {}
+            } else {
+            }
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -67,7 +67,6 @@ public class HTTPDataHandler {
             try (OutputStream os = urlConnection.getOutputStream()) {
                 os.write(out);
             }
-            InputStream response = urlConnection.getInputStream();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -95,8 +94,6 @@ public class HTTPDataHandler {
             try (OutputStream os = urlConnection.getOutputStream()) {
                 os.write(out);
             }
-            InputStream response = urlConnection.getInputStream();
-
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (ProtocolException e) {
