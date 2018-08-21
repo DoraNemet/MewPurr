@@ -2,7 +2,7 @@ package com.home.dfundak.mewpurr;
 
 import com.home.dfundak.mewpurr.Class.Alarm;
 
-public class SupportData {
+public class AlarmSupportData {
     public static String DB_NAME = "mewpurr";
     public static String API_KEY = "iX_PdN_3siXeqgAgPwxAszSv-kMnxSuC";
     public static String COLLECTION_NAME = "alarms";

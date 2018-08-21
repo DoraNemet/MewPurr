@@ -3,10 +3,12 @@ package com.home.dfundak.mewpurr;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,16 +18,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.home.dfundak.mewpurr.Class.Alarm;
+import com.home.dfundak.mewpurr.Class.Timestamp;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by DoraF on 22/02/2018.
@@ -33,8 +41,11 @@ import java.io.UnsupportedEncodingException;
 
 public class HomeFragment extends Fragment {
     private static String FOOD_RELEASED = "Food released";
-    private Button feedMeButton, sub;
-    private TextView mess;
+    private Button feedMeButton;
+    private RecyclerView timestampsLV;
+
+    ArrayList<Timestamp> timestamps = new ArrayList<Timestamp>();
+    TimestampAdapter adapter;
 
     private final String TOPIC = "mewpurr/food";
     private MqttAndroidClient client = new MqttAndroidClient(null, null, null);
@@ -74,11 +85,15 @@ public class HomeFragment extends Fragment {
     }
 
     private void initializeUI(View layout) {
-        sub = layout.findViewById(R.id.sub);
         feedMeButton = layout.findViewById(R.id.feed_me_button);
-        mess = layout.findViewById(R.id.message);
+        timestampsLV = layout.findViewById(R.id.timestamps_list_view);
 
         if (isConnected(getActivity())) {
+            adapter = new TimestampAdapter(timestamps);
+            timestampsLV.setAdapter(adapter);
+            timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+            new GetData().execute(TimestampSupportData.getAddressAPI());
 
             String clientId = MqttClient.generateClientId();
             client = new MqttAndroidClient(getActivity(), "tcp://broker.hivemq.com:1883", clientId);
@@ -101,47 +116,6 @@ public class HomeFragment extends Fragment {
                 e.printStackTrace();
             }
 
-            sub.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int qos = 1;
-                    try {
-                        IMqttToken subToken = client.subscribe(TOPIC, qos);
-                        subToken.setActionCallback(new IMqttActionListener() {
-                            @Override
-                            public void onSuccess(IMqttToken asyncActionToken) {
-                                client.setCallback(new MqttCallback() {
-                                    @Override
-                                    public void connectionLost(Throwable cause) {
-                                        Toast.makeText(getActivity(), "Lost connection", Toast.LENGTH_SHORT).show();
-                                        Log.d("mqtt", "Lost connection");
-                                    }
-
-                                    @Override
-                                    public void messageArrived(String topic, MqttMessage message) throws Exception {
-                                        mess.setText(new String(message.getPayload()));
-                                    }
-
-                                    @Override
-                                    public void deliveryComplete(IMqttDeliveryToken token) {
-
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onFailure(IMqttToken asyncActionToken,
-                                                  Throwable exception) {
-                                Toast.makeText(getActivity(), "ERROR connecting", Toast.LENGTH_SHORT).show();
-                                Log.d("mqtt", "ERROR connecting");
-                            }
-                        });
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
             feedMeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -159,8 +133,42 @@ public class HomeFragment extends Fragment {
                 }
             });
         } else {
-            sub.setEnabled(false);
             feedMeButton.setEnabled(false);
+            adapter = new TimestampAdapter(timestamps);
+            timestampsLV.setAdapter(adapter);
+            timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
+    }
+
+    class GetData extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String stream = null;
+            String urlString = params[0];
+
+            HTTPDataHandler http = new HTTPDataHandler();
+            stream = http.GetHTTPData(urlString);
+            return stream;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+           // progressBar.setVisibility(View.GONE);
+
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<Timestamp>>() {
+            }.getType();
+            timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+            timestamps = gson.fromJson(s, listType); // parse to List
+            adapter.updateData(timestamps);
+            //PreferencesManagement.saveAlarms(getActivity(), timestamps);
         }
     }
 

@@ -46,6 +46,7 @@ public class HTTPDataHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Log.d("timestamp", stream);
         return stream;
     }
 

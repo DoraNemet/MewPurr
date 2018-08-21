@@ -64,7 +64,7 @@ public class AlarmFragment extends Fragment {
             alarmsLV.setAdapter(adapter);
             alarmsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            new GetData().execute(SupportData.getAddressAPI());
+            new GetData().execute(AlarmSupportData.getAddressAPI());
             this.setTime.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -96,7 +96,7 @@ public class AlarmFragment extends Fragment {
                             .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    new DeleteData(alarms.get(mpos)).execute(SupportData.getAddressSingle(alarms.get(mpos)));
+                                    new DeleteData(alarms.get(mpos)).execute(AlarmSupportData.getAddressSingle(alarms.get(mpos)));
                                 }
                             })
                             .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -129,7 +129,7 @@ public class AlarmFragment extends Fragment {
             timeString.append("0");
         }
         timeString.append(selectedMinute);
-        new PostData(timeString.toString()).execute(SupportData.getAddressAPI());
+        new PostData(timeString.toString()).execute(AlarmSupportData.getAddressAPI());
     }
 
     class PostData extends AsyncTask<String, String, String> {
@@ -158,7 +158,7 @@ public class AlarmFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            new GetData().execute(SupportData.getAddressAPI());
+            new GetData().execute(AlarmSupportData.getAddressAPI());
         }
     }
 
@@ -220,7 +220,7 @@ public class AlarmFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            new AlarmFragment.GetData().execute(SupportData.getAddressAPI());
+            new AlarmFragment.GetData().execute(AlarmSupportData.getAddressAPI());
         }
     }
 
