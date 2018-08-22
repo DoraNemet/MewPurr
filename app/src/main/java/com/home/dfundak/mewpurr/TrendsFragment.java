@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.ImageView;
 
 /**
@@ -22,11 +21,11 @@ public class TrendsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.trends_fragment, container, false);
         ImageView statsImage = getActivity().findViewById(R.id.stats_image);
-        statsImage.setAlpha(0.5f);
+        statsImage.setImageResource(R.drawable.stats_yellow);
         ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
-        alarmImage.setAlpha(1f);
+        alarmImage.setImageResource(R.drawable.clock);
         ImageView homeImage = getActivity().findViewById(R.id.home_image);
-        homeImage.setAlpha(1f);
+        homeImage.setImageResource(R.drawable.home);
 
         final WebView webview = layout.findViewById(R.id.webView);
         webview.setWebChromeClient(new WebChromeClient());

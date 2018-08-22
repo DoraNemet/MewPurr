@@ -53,11 +53,11 @@ public class AlarmFragment extends Fragment {
         progressBar = layout.findViewById(R.id.pbProgress);
 
         ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
-        alarmImage.setAlpha(0.5f);
+        alarmImage.setImageResource(R.drawable.clock_yellow);
         ImageView statsImage = getActivity().findViewById(R.id.stats_image);
-        statsImage.setAlpha(1f);
+        statsImage.setImageResource(R.drawable.stats);
         ImageView homeImage = getActivity().findViewById(R.id.home_image);
-        homeImage.setAlpha(1f);
+        homeImage.setImageResource(R.drawable.home);
 
         if (isConnected(getActivity())) {
             adapter = new AlarmAdapter(alarms);

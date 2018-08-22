@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +44,7 @@ public class HomeFragment extends Fragment {
     private static String FOOD_RELEASED = "Food released";
     private Button feedMeButton;
     private RecyclerView timestampsLV;
+    private ProgressBar progressBar;
 
     ArrayList<Timestamp> timestamps = new ArrayList<Timestamp>();
     TimestampAdapter adapter;
@@ -56,11 +58,11 @@ public class HomeFragment extends Fragment {
         initializeUI(layout);
 
         ImageView homeImage = getActivity().findViewById(R.id.home_image);
-        homeImage.setAlpha(0.5f);
+        homeImage.setImageResource(R.drawable.home_yellow);
         ImageView statsImage = getActivity().findViewById(R.id.stats_image);
-        statsImage.setAlpha(1f);
+        statsImage.setImageResource(R.drawable.stats);
         ImageView alarmImage = getActivity().findViewById(R.id.alarm_image);
-        alarmImage.setAlpha(1f);
+        alarmImage.setImageResource(R.drawable.clock);
         return layout;
     }
 
@@ -87,6 +89,7 @@ public class HomeFragment extends Fragment {
     private void initializeUI(View layout) {
         feedMeButton = layout.findViewById(R.id.feed_me_button);
         timestampsLV = layout.findViewById(R.id.timestamps_list_view);
+        progressBar = layout.findViewById(R.id.pbProgress);
 
         if (isConnected(getActivity())) {
             adapter = new TimestampAdapter(timestamps);
@@ -137,6 +140,7 @@ public class HomeFragment extends Fragment {
             adapter = new TimestampAdapter(timestamps);
             timestampsLV.setAdapter(adapter);
             timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -160,7 +164,7 @@ public class HomeFragment extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-           // progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
 
             Gson gson = new Gson();
             Type listType = new TypeToken<List<Timestamp>>() {
