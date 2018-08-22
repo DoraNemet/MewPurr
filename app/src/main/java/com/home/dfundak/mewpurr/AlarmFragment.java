@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -129,7 +130,11 @@ public class AlarmFragment extends Fragment {
             timeString.append("0");
         }
         timeString.append(selectedMinute);
-        new PostData(timeString.toString()).execute(AlarmSupportData.getAddressAPI());
+        if (!alarms.stream().filter(x -> timeString.toString().equals(x.getTime())).findAny().isPresent()) {
+            new PostData(timeString.toString()).execute(AlarmSupportData.getAddressAPI());
+        } else {
+            Toast.makeText(getActivity(), "This time already exists!", Toast.LENGTH_LONG).show();
+        }
     }
 
     class PostData extends AsyncTask<String, String, String> {

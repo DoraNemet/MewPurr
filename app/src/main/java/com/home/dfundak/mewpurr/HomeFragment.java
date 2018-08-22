@@ -45,6 +45,7 @@ public class HomeFragment extends Fragment {
     private Button feedMeButton;
     private RecyclerView timestampsLV;
     private ProgressBar progressBar;
+    private TextView messageTV;
 
     ArrayList<Timestamp> timestamps = new ArrayList<Timestamp>();
     TimestampAdapter adapter;
@@ -90,6 +91,7 @@ public class HomeFragment extends Fragment {
         feedMeButton = layout.findViewById(R.id.feed_me_button);
         timestampsLV = layout.findViewById(R.id.timestamps_list_view);
         progressBar = layout.findViewById(R.id.pbProgress);
+        messageTV = layout.findViewById(R.id.message);
 
         if (isConnected(getActivity())) {
             adapter = new TimestampAdapter(timestamps);
@@ -141,6 +143,7 @@ public class HomeFragment extends Fragment {
             timestampsLV.setAdapter(adapter);
             timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
             progressBar.setVisibility(View.GONE);
+            messageTV.setText("Must be online to see this!");
         }
     }
 

@@ -38,17 +38,6 @@ public class TimestampAdapter extends RecyclerView.Adapter<TimestampAdapter.View
     @Override
     public void onBindViewHolder(TimestampAdapter.ViewHolder holder, int position) {
         Timestamp timestamp = this.mTimestamps.get(position);
-        /*Log.d("timestamp", timestamp.getDate());
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm dd.MM.yyyy");
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            date = f.parse(timestamp.getDate());
-           Log.d("date", date.toString());
-        } catch (ParseException ee) {
-            Log.d("error","can't parse");
-            holder.time.setText(formatter.format(date));
-        }*/
         holder.time.setText(timestamp.getDate());
     }
 
