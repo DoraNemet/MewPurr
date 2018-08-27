@@ -3,10 +3,13 @@ package com.home.dfundak.mewpurr.Fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,10 +24,12 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.home.dfundak.mewpurr.Class.Sensor;
 import com.home.dfundak.mewpurr.Class.Timestamp;
 import com.home.dfundak.mewpurr.SupportData.HTTPDataHandler;
 import com.home.dfundak.mewpurr.R;
 import com.home.dfundak.mewpurr.Adapters.TimestampAdapter;
+import com.home.dfundak.mewpurr.SupportData.SensorSupportData;
 import com.home.dfundak.mewpurr.SupportData.TimestampSupportData;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -44,12 +49,13 @@ import java.util.List;
  * Created by DoraF on 22/02/2018.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static String FOOD_RELEASED = "Food request sent";
     private Button feedMeButton;
     private RecyclerView timestampsLV;
     private ProgressBar progressBar;
-    private TextView messageTV;
+    private TextView messageTV, warningTV;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     ArrayList<Timestamp> timestamps = new ArrayList<Timestamp>();
     TimestampAdapter adapter;
@@ -96,13 +102,17 @@ public class HomeFragment extends Fragment {
         timestampsLV = layout.findViewById(R.id.timestamps_list_view);
         progressBar = layout.findViewById(R.id.pbProgress);
         messageTV = layout.findViewById(R.id.message);
+        warningTV = layout.findViewById(R.id.warning);
+        swipeRefreshLayout = layout.findViewById(R.id.swipe_container);
+        swipeRefreshLayout.setOnRefreshListener(this);
 
         if (isConnected(getActivity())) {
             adapter = new TimestampAdapter(timestamps);
             timestampsLV.setAdapter(adapter);
             timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-            new GetData().execute(TimestampSupportData.getAddressAPI());
+            new GetDataTimestamps().execute(TimestampSupportData.getAddressAPI());
+            new GetDataSensor().execute(SensorSupportData.getAddressAPI());
 
             String clientId = MqttClient.generateClientId();
             client = new MqttAndroidClient(getActivity(), "tcp://broker.hivemq.com:1883", clientId);
@@ -139,10 +149,12 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(getActivity(), "Can't send to MQTT broker", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
+                    new GetDataSensor().execute(SensorSupportData.getAddressAPI());
                 }
             });
         } else {
             feedMeButton.setEnabled(false);
+            feedMeButton.setAlpha(.5f);
             adapter = new TimestampAdapter(timestamps);
             timestampsLV.setAdapter(adapter);
             timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -151,7 +163,18 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    class GetData extends AsyncTask<String, Void, String> {
+    @Override
+    public void onRefresh() {
+        new Handler().postDelayed(new Runnable() {
+            @Override public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+                new GetDataTimestamps().execute(TimestampSupportData.getAddressAPI());
+                new GetDataSensor().execute(SensorSupportData.getAddressAPI());
+            }
+        }, 5000);
+    }
+
+    class GetDataTimestamps extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPreExecute() {
@@ -182,6 +205,46 @@ public class HomeFragment extends Fragment {
             adapter.updateData(timestamps);
         }
     }
+
+    class GetDataSensor extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String stream = null;
+            String urlString = params[0];
+
+            HTTPDataHandler http = new HTTPDataHandler();
+            stream = http.GetHTTPData(urlString);
+            return stream;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressBar.setVisibility(View.GONE);
+
+            Gson gson = new Gson();
+            Type listType = new TypeToken<List<Sensor>>() {
+            }.getType();
+            List <Sensor> sensorItems = gson.fromJson(s, listType); // parse to List
+
+            if(sensorItems.get(0).getFood().equals("empty")) {
+                feedMeButton.setEnabled(false);
+                feedMeButton.setAlpha(.5f);
+                warningTV.setVisibility(View.VISIBLE);
+            } else {
+                feedMeButton.setEnabled(true);
+                feedMeButton.setAlpha(1);
+                warningTV.setVisibility(View.GONE);
+            }
+        }
+    }
+
 
     public boolean isConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

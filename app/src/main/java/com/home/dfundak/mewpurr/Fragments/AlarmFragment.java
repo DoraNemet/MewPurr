@@ -117,6 +117,7 @@ public class AlarmFragment extends Fragment {
 
         } else {
             setTime.setEnabled(false);
+            setTime.setAlpha(.5f);
             progressBar.setVisibility(View.GONE);
             alarms = PreferencesManagement.loadAlarms(getActivity());
             adapter = new AlarmAdapter(alarms);
