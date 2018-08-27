@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.SupportData;
 
 import com.home.dfundak.mewpurr.Class.Alarm;
 

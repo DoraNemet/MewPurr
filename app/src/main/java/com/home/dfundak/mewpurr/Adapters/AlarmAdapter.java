@@ -1,9 +1,7 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.Adapters;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.home.dfundak.mewpurr.Class.Alarm;
+import com.home.dfundak.mewpurr.R;
 
 import java.util.ArrayList;
 

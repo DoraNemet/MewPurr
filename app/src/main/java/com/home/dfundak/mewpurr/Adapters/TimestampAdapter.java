@@ -1,22 +1,16 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.home.dfundak.mewpurr.Class.Timestamp;
+import com.home.dfundak.mewpurr.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class TimestampAdapter extends RecyclerView.Adapter<TimestampAdapter.ViewHolder> {
 
@@ -38,7 +32,7 @@ public class TimestampAdapter extends RecyclerView.Adapter<TimestampAdapter.View
     @Override
     public void onBindViewHolder(TimestampAdapter.ViewHolder holder, int position) {
         Timestamp timestamp = this.mTimestamps.get(position);
-        holder.time.setText(timestamp.getDate());
+        holder.time.setText(timestamp.getDate().substring(0, 16));
     }
 
     @Override

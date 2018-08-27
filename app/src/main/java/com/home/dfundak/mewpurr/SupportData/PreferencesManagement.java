@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.SupportData;
 
 import android.content.Context;
 import android.content.SharedPreferences;

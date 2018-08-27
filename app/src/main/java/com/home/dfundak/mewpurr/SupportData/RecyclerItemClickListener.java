@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.SupportData;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -6,16 +6,16 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
+public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListener {
     private OnItemClickListener mListener;
 
-    interface OnItemClickListener {
+    public interface OnItemClickListener {
         void onItemClick(View view, int position);
     }
 
     private GestureDetector mGestureDetector;
 
-    RecyclerItemClickListener(Context context, OnItemClickListener listener) {
+    public RecyclerItemClickListener(Context context, OnItemClickListener listener) {
         mListener = listener;
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override

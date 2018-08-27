@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.SupportData;
 
 public class TimestampSupportData {
     public static String DB_NAME = "mewpurr";

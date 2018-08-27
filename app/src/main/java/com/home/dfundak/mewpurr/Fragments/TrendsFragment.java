@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.Fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ImageView;
+
+import com.home.dfundak.mewpurr.R;
 
 /**
  * Created by DoraF on 22/02/2018.

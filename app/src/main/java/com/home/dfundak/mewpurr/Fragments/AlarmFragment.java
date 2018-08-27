@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -22,7 +22,13 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.home.dfundak.mewpurr.Adapters.AlarmAdapter;
+import com.home.dfundak.mewpurr.SupportData.AlarmSupportData;
 import com.home.dfundak.mewpurr.Class.Alarm;
+import com.home.dfundak.mewpurr.SupportData.HTTPDataHandler;
+import com.home.dfundak.mewpurr.SupportData.PreferencesManagement;
+import com.home.dfundak.mewpurr.R;
+import com.home.dfundak.mewpurr.SupportData.RecyclerItemClickListener;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;

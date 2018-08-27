@@ -1,4 +1,4 @@
-package com.home.dfundak.mewpurr;
+package com.home.dfundak.mewpurr.Fragments;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -21,8 +21,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.home.dfundak.mewpurr.Class.Alarm;
 import com.home.dfundak.mewpurr.Class.Timestamp;
+import com.home.dfundak.mewpurr.SupportData.HTTPDataHandler;
+import com.home.dfundak.mewpurr.R;
+import com.home.dfundak.mewpurr.Adapters.TimestampAdapter;
+import com.home.dfundak.mewpurr.SupportData.TimestampSupportData;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -34,6 +37,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,7 +45,7 @@ import java.util.List;
  */
 
 public class HomeFragment extends Fragment {
-    private static String FOOD_RELEASED = "Food released";
+    private static String FOOD_RELEASED = "Food request sent";
     private Button feedMeButton;
     private RecyclerView timestampsLV;
     private ProgressBar progressBar;
@@ -174,8 +178,8 @@ public class HomeFragment extends Fragment {
             }.getType();
             timestampsLV.setLayoutManager(new LinearLayoutManager(getActivity()));
             timestamps = gson.fromJson(s, listType); // parse to List
+            Collections.reverse(timestamps);
             adapter.updateData(timestamps);
-            //PreferencesManagement.saveAlarms(getActivity(), timestamps);
         }
     }
 

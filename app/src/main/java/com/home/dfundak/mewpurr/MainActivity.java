@@ -7,6 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.home.dfundak.mewpurr.Fragments.AlarmFragment;
+import com.home.dfundak.mewpurr.Fragments.HomeFragment;
+import com.home.dfundak.mewpurr.Fragments.TrendsFragment;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private ImageView clock, home, trends;
 
