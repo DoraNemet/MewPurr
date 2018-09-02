@@ -3,7 +3,6 @@ package com.home.dfundak.mewpurr.Fragments;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -24,11 +23,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.home.dfundak.mewpurr.Adapters.TimestampAdapter;
 import com.home.dfundak.mewpurr.Class.Sensor;
 import com.home.dfundak.mewpurr.Class.Timestamp;
-import com.home.dfundak.mewpurr.SupportData.HTTPDataHandler;
 import com.home.dfundak.mewpurr.R;
-import com.home.dfundak.mewpurr.Adapters.TimestampAdapter;
+import com.home.dfundak.mewpurr.SupportData.HTTPDataHandler;
 import com.home.dfundak.mewpurr.SupportData.SensorSupportData;
 import com.home.dfundak.mewpurr.SupportData.TimestampSupportData;
 
@@ -48,6 +47,11 @@ import java.util.List;
 /**
  * Created by DoraF on 22/02/2018.
  */
+
+//https://www.hivemq.com/blog/mqtt-client-library-enyclopedia-paho-android-service
+//https://docs.mlab.com/data-api/
+//https://developer.android.com/reference/android/net/ConnectivityManager
+//https://antonioleiva.com/swiperefreshlayout/
 
 public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private static String FOOD_RELEASED = "Food request sent";
