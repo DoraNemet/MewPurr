@@ -39,6 +39,8 @@ import java.util.List;
  * Created by DoraF on 22/02/2018.
  */
 
+//https://developer.android.com/reference/android/widget/TimePicker
+
 public class AlarmFragment extends Fragment {
     private Button setTime;
     private RecyclerView alarmsLV;

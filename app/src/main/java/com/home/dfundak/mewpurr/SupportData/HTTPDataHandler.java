@@ -14,6 +14,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+
+//https://www.c-sharpcorner.com/article/create-a/
 public class HTTPDataHandler {
     static String stream = null;
 
