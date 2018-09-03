@@ -144,6 +144,8 @@ public class HomeFragment extends Fragment implements SwipeRefreshLayout.OnRefre
                         encodedPayload = payload.getBytes("UTF-8");
                         MqttMessage message = new MqttMessage(encodedPayload);
                         client.publish(TOPIC, message);
+                        new GetDataTimestamps().execute(TimestampSupportData.getAddressAPI());
+                        new GetDataSensor().execute(SensorSupportData.getAddressAPI());
                         Toast.makeText(getActivity(), FOOD_RELEASED, Toast.LENGTH_SHORT).show();
                     } catch (UnsupportedEncodingException | MqttException e) {
                         Toast.makeText(getActivity(), "Can't send to MQTT broker", Toast.LENGTH_SHORT).show();
